@@ -51,8 +51,8 @@ orderRoutes.post("/", async (c) => {
 
     // Create a map of menu item IDs to their prices
     const menuItemPrices: { [key: number]: number } = {};
-    menuItems.forEach((item: { id: number; price: number }) => {
-      menuItemPrices[item.id] = item.price;
+    menuItems.forEach((item) => {
+      menuItemPrices[item.id] = item.price.toNumber();
     });
 
     // Calculate total price

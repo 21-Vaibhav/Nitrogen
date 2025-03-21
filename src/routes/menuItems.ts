@@ -58,18 +58,22 @@ menuItemRoutes.get("/top-items", async (c) => {
 
     // Get the details of these menu items
     const topMenuItems = await Promise.all(
-      orderItems.map(async (item: { menuItemId: number; _sum: { quantity: number } }) => {
+      orderItems.map(async (item: { menuItemId: number; _sum: { quantity: number | null } }) => {
         const menuItem = await prisma.menuItem.findUnique({
           where: { id: item.menuItemId },
           include: { restaurant: true },
         });
+
+        if (!menuItem) {
+          throw new Error(`Menu item with ID ${item.menuItemId} not found`);
+        }
 
         return {
           id: menuItem.id,
           name: menuItem.name,
           price: menuItem.price,
           restaurant: menuItem.restaurant.name,
-          totalOrdered: item._sum.quantity,
+          totalOrdered: item._sum.quantity ?? 0, // Default to 0 if quantity is null
         };
       })
     );
